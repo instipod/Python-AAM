@@ -96,6 +96,18 @@ class AxisAudioManager():
                 zones.append(target)
         return zones
 
+    def get_audio_devices(self):
+        """
+        Retrieve a list of all audio devices in the Audio Manager.
+        :return list of AAMDevice objects
+        """
+        targets = self.get_audio_targets()
+        devices = []
+        for target in targets:
+            if isinstance(target, AAMDevice):
+                devices.append(target)
+        return devices
+
 
 class AAMAudioTarget():
     def __init__(self, aam, id, type):
@@ -216,6 +228,27 @@ class AAMAudioTarget():
             if isinstance(child, AAMDevice):
                 output.append(child)
         return output
+
+    def play_audio_file(self, audio_file, repeat=1, priority="HIGH"):
+        """
+        Play a one-shot audio file on the audio target.
+        :param audio_file: audio file identifiers
+        :param repeat: Number of times to repeat, default 1
+        :param priority: Priority level to play at, default HIGH
+        :return: audio session identifier
+        """
+        return self.play_audio_files([audio_file], repeat, priority)
+
+    def play_audio_files(self, audio_files, repeat=1, priority="HIGH"):
+        """
+        Play one-shot audio session of one or more files on the audio target.
+        :param audio_files: list of audio file identifiers
+        :param repeat: Number of times to repeat, default 1
+        :param priority: Priority level to play at, default HIGH
+        :return: audio session identifier
+        """
+        response = self.aam._get_aam_api_object().play_audio_file([self.id], audio_files, repeat, priority)
+        return response['id']
 
 
 class AAMVolumeTarget(AAMAudioTarget):

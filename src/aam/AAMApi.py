@@ -115,5 +115,4 @@ class AAMApi(object):
         if response.status_code == 200:
             return response.json()
         else:
-            print(response.content)
             raise RuntimeError("Could not create one shot audio session from AAMApi!")
