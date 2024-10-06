@@ -108,11 +108,18 @@ class AAMAudioTarget():
         return f"AAMAudioTarget ({self.type}) {self.id}"
 
     def _load_json(self, json):
+        """
+        Load target information from the specified JSON string into the class.
+        :param json: JSON target information
+        """
         self.data = json
         self.id = self.data['id']
         self.type = self.data['type']
 
     def _load(self):
+        """
+        Load target information from the API into the class.
+        """
         aam_api = self.aam._get_aam_api_object()
         target = aam_api.get_audio_target(self.id)
         self._load_json(target)
@@ -286,6 +293,9 @@ class AAMDevice(AAMAudioTarget):
         return f"AAMDevice {self.id}"
 
     def _load_device_info(self):
+        """
+        Loads hardware device information from the API into the class instance.
+        """
         devices = self.aam.get_devices()
         this = None
 
@@ -300,29 +310,63 @@ class AAMDevice(AAMAudioTarget):
             self.device_info = device
 
     def get_device_information(self):
+        """
+        Returns a dict of the device's hardware information.
+        :return: dict
+        """
         if not self.device_info_loaded:
             self._load_device_info()
         return self.device_info
 
     def get_mac_address(self):
+        """
+        Returns the device's ethernet MAC address.
+        :return: string
+        """
         return self.get_device_information()['mac']
 
     def get_ip_address(self):
+        """
+        Returns the device's IP address.
+        :return: string
+        """
         return self.get_device_information()['ipAddress']
 
     def get_model_name(self):
+        """
+        Returns the device's hardware model name.
+        :return: string
+        """
         return self.get_device_information()['productName']
 
     def get_model_id(self):
+        """
+        Returns the device's hardware model number or identifier.
+        :return: string
+        """
         return self.get_device_information()['type']
 
     def get_firmware_version(self):
+        """
+        Returns the device's current firmware version.
+        :return: string
+        """
         return self.get_device_information()['fwVersion']
 
     def get_parent_zone(self):
-        return AAMPhysicalZone(self.aam, "zon_" + str(self.get_device_information()['sinks'][0]['zones'][0]['id']))
+        """
+        Retrieves and returns the device's parent physical zone.
+        :return: AAMPhysicalZone
+        """
+        zone = AAMPhysicalZone(self.aam, "zon_" + str(self.get_device_information()['sinks'][0]['zones'][0]['id']))
+        zone._load()
+        return zone
 
     def assign_to_zone(self, zone):
+        """
+        Reassign this device to another physical zone.
+        :param zone: AAMPhysicalZone
+        """
         if isinstance(zone, AAMPhysicalZone):
             zone_id = zone.get_id().split("_")[1]
         if isinstance(zone, int):
@@ -335,4 +379,8 @@ class AAMDevice(AAMAudioTarget):
         return result
 
     def ding(self, length=2):
+        """
+        Trigger the test tone to play on the device.
+        :param length: Length of test tone, default 2 seconds
+        """
         return self.aam._get_uno_api_object().start_test_tone(self.get_id().split("_")[1], length)
