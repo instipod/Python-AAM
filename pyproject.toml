@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aam"
+version = "0.0.1"
+authors = [
+  { name="instipod", email="instipod@instipod.com" },
+]
+description = "Python library for interfacing with and controlling Axis Audio Manager Pro servers"
+readme = "README.md"
+requires-python = ">=3"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+]
+dependencies = [
+  'requests'
+]
+
+[project.urls]
+Homepage = "https://github.com/instipod/Python-AAM"
+Issues = "https://github.com/instipod/Python-AAM/issues"
